@@ -5,7 +5,7 @@ import { ImageUploader } from './components/ImageUploader';
 import { ImagePreview } from './components/ImagePreview';
 import { Modal } from './components/Modal';
 import { ImageFile } from './types';
-import { compressImage, createObjectURL, revokeObjectURL, formatFileName } from './utils/imageProcessing';
+import { compressImage, createObjectURL, revokeObjectURL, formatFileName, resizeImage } from './utils/imageProcessing';
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -56,7 +56,25 @@ function App() {
 
   const handleUpdateImage = (id: string, updates: Partial<ImageFile>) => {
     setImages((prev) =>
-      prev.map((img) => (img.id === id ? { ...img, ...updates } : img))
+      prev.map((img) => {
+        if (img.id === id) {
+          const updated = { ...img, ...updates };
+          // If dimensions were updated, update the preview
+          if (updates.dimensions) {
+            revokeObjectURL(img.preview);
+            resizeImage(img.file, updates.dimensions.width, updates.dimensions.height)
+              .then((resizedFile) => {
+                updated.file = resizedFile;
+                updated.preview = createObjectURL(resizedFile);
+                setImages((current) =>
+                  current.map((i) => (i.id === id ? updated : i))
+                );
+              });
+          }
+          return updated;
+        }
+        return img;
+      })
     );
   };
 
