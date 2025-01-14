@@ -1,4 +1,3 @@
-cat > README.md << 'EOL'
 # Image Resizer
 
 A modern web application for resizing and managing multiple images with a clean, dark-mode compatible interface. Built with React, TypeScript, and Tailwind CSS.
@@ -33,27 +32,21 @@ A modern web application for resizing and managing multiple images with a clean,
 ### Installation
 
 1. Clone the repository
-bash
-git clone https://github.com/yourusername/image-resizer.git
-cd image-resizer
+- bash
+- git clone https://github.com/brice-dubois/image_resizer
+- cd image_resizer
 
 2. Install dependencies
-bash
-npm install
-or
-yarn install
+- bash
+- npm install
 
 3. Start the development server
-bash
-npm run dev
-or
-yarn dev
+- bash
+- npm run dev
 
 4. Build for production
-bash
-npm run build
-or
-yarn build
+- bash
+- npm run build
 
 
 ## Usage
@@ -80,18 +73,35 @@ yarn build
 ## Project Structure
 
 image-resizer/
+├── .bolt/
+│   ├── config.json
+│   └── prompt
 ├── src/
-│ ├── components/
-│ │ ├── ImagePreview.tsx
-│ │ ├── ImageUploader.tsx
-│ │ └── Modal.tsx
-│ ├── utils/
-│ │ └── imageProcessing.ts
-│ ├── types.ts
-│ ├── App.tsx
-│ └── main.tsx
+│   ├── components/
+│   │   ├── ImagePreview.tsx
+│   │   ├── ImageUploader.tsx
+│   │   └── Modal.tsx
+│   ├── utils/
+│   │   └── imageProcessing.ts
+│   ├── types.ts
+│   ├── App.tsx
+│   ├── main.tsx
+│   ├── vite-env.d.ts
+│   └── index.css
 ├── public/
-└── package.json
+│   └── vite.svg
+├── node_modules/
+├── .gitignore
+├── README.md
+├── eslint.config.js
+├── index.html
+├── package.json
+├── postcss.config.js
+├── tailwind.config.js
+├── tsconfig.json
+├── tsconfig.app.json
+├── tsconfig.node.json
+└── vite.config.ts
 
 
 ## Contributing
