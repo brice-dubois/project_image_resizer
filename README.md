@@ -71,37 +71,7 @@ A modern web application for resizing and managing multiple images with a clean,
    - Use "Download All" to get a ZIP file of all images
 
 ## Project Structure
-
-image-resizer/
-├── .bolt/
-│   ├── config.json
-│   └── prompt
-├── src/
-│   ├── components/
-│   │   ├── ImagePreview.tsx
-│   │   ├── ImageUploader.tsx
-│   │   └── Modal.tsx
-│   ├── utils/
-│   │   └── imageProcessing.ts
-│   ├── types.ts
-│   ├── App.tsx
-│   ├── main.tsx
-│   ├── vite-env.d.ts
-│   └── index.css
-├── public/
-│   └── vite.svg
-├── node_modules/
-├── .gitignore
-├── README.md
-├── eslint.config.js
-├── index.html
-├── package.json
-├── postcss.config.js
-├── tailwind.config.js
-├── tsconfig.json
-├── tsconfig.app.json
-├── tsconfig.node.json
-└── vite.config.ts
+![alt text](image.png)
 
 
 ## Contributing
