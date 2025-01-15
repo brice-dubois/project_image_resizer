@@ -4,6 +4,7 @@ export interface ImageFile {
   preview: string;
   name: string;
   category: string;
+  extension: 'jpg' | 'png' | 'gif';
   dimensions: {
     width: number;
     height: number;

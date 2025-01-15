@@ -64,10 +64,8 @@ export function revokeObjectURL(url: string): void {
   URL.revokeObjectURL(url);
 }
 
-export function formatFileName(name: string, category: string, mimeType: string): string {
-  const extension = mimeType.split('/')[1];
-  const baseName = name.split('.')[0];
-  return `${baseName}.${category}.${extension}`;
+export function formatFileName(name: string, category: string, extension: string): string {
+  return `${name}.${category}.${extension}`;
 }
 
 export function calculateAspectRatio(width: number, height: number): number {

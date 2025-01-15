@@ -37,10 +37,11 @@ function App() {
       });
 
       newImages.push({
-        id: crypto.randomUUID(),
+        id: Math.random().toString(36).substring(2) + Date.now().toString(36),
         file: compressed,
         preview,
-        name: file.name.split('.').slice(0, -1).join('.'), // Remove extension from display name
+        name: file.name.split('.').slice(0, -1).join('.'),
+        extension: (file.name.split('.').pop()?.toLowerCase() || 'jpg') as 'jpg' | 'png' | 'gif',
         category: 'MAIN',
         dimensions: {
           width: img.width,
@@ -98,16 +99,17 @@ function App() {
   const handleDownloadAll = async () => {
     const zip = new JSZip();
     
-    images.forEach((image) => {
-      const fileName = formatFileName(image.name, image.category, image.file.type);
-      zip.file(fileName, image.file);
-    });
+    await Promise.all(images.map(async (image) => {
+      const fileName = `${image.name}.${image.extension}`; // Simplified file name
+      const arrayBuffer = await image.file.arrayBuffer();
+      zip.file(fileName, arrayBuffer);
+    }));
     
     const content = await zip.generateAsync({ type: 'blob' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(content);
     link.download = 'images.zip';
-    link.click();
+    link.click(); 
     URL.revokeObjectURL(link.href);
     setShowConfirmation(false);
   };

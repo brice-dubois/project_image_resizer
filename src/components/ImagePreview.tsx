@@ -87,7 +87,7 @@ export function ImagePreview({ image, onUpdate, onDelete }: Props) {
       const resizedDataUrl = resizeImage(imgElement, width, height);
       const link = document.createElement('a');
       link.href = resizedDataUrl;
-      link.download = `${image.name}.${image.category}.jpg`; // or .png
+      link.download = `${image.name}.${image.category}.${image.extension}`;
       link.click();
     };
   };
@@ -157,6 +157,16 @@ export function ImagePreview({ image, onUpdate, onDelete }: Props) {
                 {cat}
               </option>
             ))}
+          </select>
+
+          <select
+            value={image.extension}
+            onChange={(e) => onUpdate(image.id, { extension: e.target.value as 'jpg' | 'png' | 'gif' })}
+            className="w-full px-2 py-1 text-sm border rounded dark:bg-gray-700 dark:border-gray-600"
+          >
+            <option value="jpg">JPG</option>
+            <option value="png">PNG</option>
+            <option value="gif">GIF</option>
           </select>
 
           <button
