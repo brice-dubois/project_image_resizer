@@ -91,9 +91,11 @@ function App() {
 
   const handleDownloadImage = async (image: ImageFile) => {
     const link = document.createElement('a');
-    link.href = image.preview;
-    link.download = formatFileName(image.name, image.category, image.file.type);
+    const blobUrl = URL.createObjectURL(image.file);
+    link.href = blobUrl;
+    link.download = `${image.name}.${image.extension}`;
     link.click();
+    URL.revokeObjectURL(blobUrl);
   };
 
   const handleDownloadAll = async () => {
