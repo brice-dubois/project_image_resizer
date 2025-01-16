@@ -15,12 +15,15 @@ const categories: Category[] = ['MAIN', 'PT01', 'PT02', 'PT03', 'PT04', 'PT05', 
 
 
 export function ImagePreview({ image, onUpdate, onDelete }: Props) {
+  // State to manage modal visibility and image dimensions
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [width, setWidth] = useState(image.dimensions.width);
   const [height, setHeight] = useState(image.dimensions.height);
   const [maintainAspectRatio, setMaintainAspectRatio] = useState(true);
 
+  // Function to handle resizing the image
   const handleResize = () => {
+    // Update image dimensions and close modal
     onUpdate(image.id, {
       dimensions: {
         ...image.dimensions,
@@ -31,6 +34,7 @@ export function ImagePreview({ image, onUpdate, onDelete }: Props) {
     setIsModalOpen(false);
   };
 
+  // Function to reset dimensions to original size
   const handleReset = () => {
     const originalWidth = image.dimensions.originalWidth;
     const originalHeight = image.dimensions.originalHeight;
@@ -45,6 +49,7 @@ export function ImagePreview({ image, onUpdate, onDelete }: Props) {
     });
   };
 
+  // Function to handle width changes while maintaining aspect ratio
   const handleWidthChange = (newWidth: number) => {
     if (maintainAspectRatio) {
       const { width: w, height: h } = getDimensionsWithAspectRatio(
@@ -59,6 +64,7 @@ export function ImagePreview({ image, onUpdate, onDelete }: Props) {
     }
   };
 
+  // Function to handle height changes while maintaining aspect ratio
   const handleHeightChange = (newHeight: number) => {
     if (maintainAspectRatio) {
       const { width: w, height: h } = getDimensionsWithAspectRatio(
@@ -80,6 +86,7 @@ export function ImagePreview({ image, onUpdate, onDelete }: Props) {
     setHeight(image.dimensions.height);
   }, [image.dimensions.width, image.dimensions.height]);
 
+  // Function to handle image download
   const handleDownload = () => {
     const imgElement = new Image();
     imgElement.src = image.preview;
@@ -92,6 +99,7 @@ export function ImagePreview({ image, onUpdate, onDelete }: Props) {
     };
   };
 
+  // Function to resize the image using a canvas
   const resizeImage = (image: HTMLImageElement, width: number, height: number): string => {
     const canvas = document.createElement('canvas');
     canvas.width = width;
@@ -105,7 +113,9 @@ export function ImagePreview({ image, onUpdate, onDelete }: Props) {
 
   return (
     <>
+      {/* Image preview and controls */}
       <div className="relative group bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+        {/* Delete button */}
         <button
           onClick={() => onDelete(image.id)}
           className="absolute -right-2 -top-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
@@ -113,6 +123,7 @@ export function ImagePreview({ image, onUpdate, onDelete }: Props) {
           <X size={16} />
         </button>
         
+        {/* Clickable image to open modal */}
         <div
           className="cursor-pointer mb-3"
           onClick={() => setIsModalOpen(true)}
@@ -123,6 +134,7 @@ export function ImagePreview({ image, onUpdate, onDelete }: Props) {
             className="w-full h-48 object-cover rounded"
           />
           
+          {/* Image details */}
           <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 space-y-1">
             <div className="flex justify-between">
               <span>Original size:</span>
@@ -139,6 +151,7 @@ export function ImagePreview({ image, onUpdate, onDelete }: Props) {
           </div>
         </div>
 
+        {/* Input fields for image name, category, and extension */}
         <div className="space-y-2">
           <input
             type="text"
@@ -169,6 +182,7 @@ export function ImagePreview({ image, onUpdate, onDelete }: Props) {
             <option value="gif">GIF</option>
           </select>
 
+          {/* Download button */}
           <button
             onClick={handleDownload}
             className="w-full px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
@@ -179,6 +193,7 @@ export function ImagePreview({ image, onUpdate, onDelete }: Props) {
         </div>
       </div>
 
+      {/* Modal for resizing image */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <div className="space-y-4">
           <img
@@ -189,6 +204,7 @@ export function ImagePreview({ image, onUpdate, onDelete }: Props) {
           
           <div className="space-y-4">
             <div className="flex items-center justify-end gap-2">
+              {/* Aspect ratio lock toggle */}
               <button
                 onClick={() => setMaintainAspectRatio(!maintainAspectRatio)}
                 className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400"
@@ -198,6 +214,7 @@ export function ImagePreview({ image, onUpdate, onDelete }: Props) {
               </button>
             </div>
 
+            {/* Input fields for width and height */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Width</label>
@@ -223,6 +240,7 @@ export function ImagePreview({ image, onUpdate, onDelete }: Props) {
               </div>
             </div>
 
+            {/* Reset and apply changes buttons */}
             <div className="flex justify-end gap-2">
               <button
                 onClick={handleReset}

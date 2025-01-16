@@ -10,12 +10,18 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@types/jquery": "^3.5.32",
+    "browser-image-compression": "^2.0.2",
+    "clsx": "^2.1.0",
+    "cropperjs": "^1.6.2",
+    "fabric": "^6.5.4",
+    "jquery": "^3.7.1",
+    "jszip": "^3.10.1",
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "jszip": "^3.10.1",
-    "browser-image-compression": "^2.0.2",
-    "clsx": "^2.1.0"
+    "react-easy-crop": "^5.2.0",
+    "react-image-crop": "^11.0.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
