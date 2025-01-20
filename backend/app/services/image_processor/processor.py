@@ -7,7 +7,8 @@ from .filters import (
     ShadowsFilter,
     SharpnessFilter,
     RotateFilter,
-    FlipFilter
+    FlipFilter,
+    RemoveBackgroundFilter
 )
 from .utils import convert_to_base64, load_image
 from typing import Optional
@@ -21,7 +22,8 @@ class ImageProcessor:
             'shadows': ShadowsFilter(),
             'sharpness': SharpnessFilter(),
             'rotate': RotateFilter(),
-            'flip': FlipFilter()
+            'flip': FlipFilter(),
+            'remove_background': RemoveBackgroundFilter()
         }
     
     async def process(self, image_bytes: io.BytesIO, operation: str, params: dict):

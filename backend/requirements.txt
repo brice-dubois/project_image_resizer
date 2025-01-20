@@ -11,3 +11,4 @@ pydantic-settings==2.1.0
 python-dotenv==1.0.0
 pytest==8.0.0
 httpx==0.26.0
+rembg==2.0.50

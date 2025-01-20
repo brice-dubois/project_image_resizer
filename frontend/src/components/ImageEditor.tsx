@@ -7,9 +7,9 @@ import {
   Save,
   Crop,
   Wand2,
-  Eraser,
   Layers,
-  X
+  X,
+  Trash2
 } from 'lucide-react';
 
 interface ImageEditorProps {
@@ -83,6 +83,10 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
 
   const handleFlip = async () => {
     await processImage('flip', { flipX: true });
+  };
+
+  const handleRemoveBackground = async () => {
+    await processImage('remove_background', {});
   };
 
   const handleSave = () => {
@@ -190,16 +194,6 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
             title="Coming Soon"
             disabled
           >
-            <Eraser size={20} />
-            <span className="absolute left-16 bg-black text-white px-2 py-1 rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-              Eraser feature coming soon!
-            </span>
-          </button>
-          <button 
-            className="p-3 hover:bg-gray-100 rounded-lg cursor-not-allowed opacity-50 relative group" 
-            title="Coming Soon"
-            disabled
-          >
             <Layers size={20} />
             <span className="absolute left-16 bg-black text-white px-2 py-1 rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity ">
               Layers feature coming soon!
@@ -272,6 +266,15 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
                 <span className="text-sm">Flip</span>
               </button>
             </div>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={handleRemoveBackground}
+              className="flex-1 p-2 border rounded-lg bg-blue-500 hover:bg-blue-700 flex items-center justify-center gap-2"
+            >
+              <Trash2 size={18} className="text-white"/>
+              <span className="text-sm text-white">Remove Background</span>
+            </button>
           </div>
         </div>
       </div>

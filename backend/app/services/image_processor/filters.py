@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 from PIL import Image, ImageEnhance
 import cv2
 import numpy as np
+import io
+from rembg import remove
 
 class ImageFilter(ABC):
     @abstractmethod
@@ -60,3 +62,16 @@ class FlipFilter(ImageFilter):
         if flip_x:
             return image.transpose(Image.FLIP_LEFT_RIGHT)
         return image
+
+class RemoveBackgroundFilter(ImageFilter):
+    async def apply(self, image: Image.Image, params: dict) -> Image.Image:
+        # Convert PIL Image to bytes
+        img_byte_arr = io.BytesIO()
+        image.save(img_byte_arr, format='PNG')
+        img_byte_arr = img_byte_arr.getvalue()
+        
+        # Remove background
+        output = remove(img_byte_arr)
+        
+        # Convert back to PIL Image
+        return Image.open(io.BytesIO(output))
