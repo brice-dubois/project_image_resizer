@@ -15,13 +15,18 @@
     "clsx": "^2.1.0",
     "cropperjs": "^1.6.2",
     "fabric": "^6.5.4",
+    "fabric-crop": "^1.0.2",
+    "fabric-history": "^2.0.0",
     "jquery": "^3.7.1",
     "jszip": "^3.10.1",
+    "konva": "^9.3.18",
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-easy-crop": "^5.2.0",
-    "react-image-crop": "^11.0.7"
+    "react-image-crop": "^11.0.7",
+    "react-konva": "^19.0.2",
+    "use-image": "^1.1.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
@@ -38,5 +43,8 @@
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.3.0",
     "vite": "^5.4.2"
+  },
+  "resolutions": {
+    "node-fetch": "^2.6.7"
   }
 }
