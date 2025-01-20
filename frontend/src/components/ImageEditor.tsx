@@ -29,6 +29,9 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
   const [shadows, setShadows] = useState(0);
   const [sharpness, setSharpness] = useState(0);
 
+  // Add this state to track the current image URL
+  const [currentImageUrl, setCurrentImageUrl] = useState(imageUrl);
+
   useEffect(() => {
     if (canvasRef.current) {
       const fabricCanvas = new Canvas(canvasRef.current, {
@@ -37,6 +40,7 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
       });
       
       setCanvas(fabricCanvas);
+      setCurrentImageUrl(imageUrl); // Set initial image URL
 
       FabricImage.fromURL(imageUrl, {
         crossOrigin: 'anonymous'
@@ -95,7 +99,7 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
   const processImage = async (operation: string, params: any) => {
     try {
       const formData = new FormData();
-      const blob = await fetch(imageUrl).then(r => r.blob());
+      const blob = await fetch(currentImageUrl).then(r => r.blob());
       formData.append('image', blob);
       
       const response = await fetch('http://localhost:8000/api/process-image', {
@@ -116,6 +120,8 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
       const data = await response.json();
       if (data.image) {
         const newImageUrl = `data:image/png;base64,${data.image}`;
+        setCurrentImageUrl(newImageUrl); // Update the current image URL
+        
         FabricImage.fromURL(newImageUrl, {
           crossOrigin: 'anonymous'
         }).then((img: FabricImage) => {
@@ -159,17 +165,45 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
       <div className="flex flex-1 overflow-hidden">
         {/* Tools Sidebar */}
         <div className="w-16 border-r p-2 flex flex-col gap-2">
-          <button className="p-3 hover:bg-gray-100 rounded-lg" title="Crop">
+          <button 
+            className="p-3 hover:bg-gray-100 rounded-lg cursor-not-allowed opacity-50 relative group" 
+            title="Coming Soon"
+            disabled
+          >
             <Crop size={20} />
+            <span className="absolute left-16 bg-black text-white px-2 py-1 rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+              Crop feature coming soon!
+            </span>
           </button>
-          <button className="p-3 hover:bg-gray-100 rounded-lg" title="Magic Wand">
+          <button 
+            className="p-3 hover:bg-gray-100 rounded-lg cursor-not-allowed opacity-50 relative group" 
+            title="Coming Soon"
+            disabled
+          >
             <Wand2 size={20} />
+            <span className="absolute left-16 bg-black text-white px-2 py-1 rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+              Magic Wand feature coming soon!
+            </span>
           </button>
-          <button className="p-3 hover:bg-gray-100 rounded-lg" title="Eraser">
+          <button 
+            className="p-3 hover:bg-gray-100 rounded-lg cursor-not-allowed opacity-50 relative group" 
+            title="Coming Soon"
+            disabled
+          >
             <Eraser size={20} />
+            <span className="absolute left-16 bg-black text-white px-2 py-1 rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+              Eraser feature coming soon!
+            </span>
           </button>
-          <button className="p-3 hover:bg-gray-100 rounded-lg" title="Layers">
+          <button 
+            className="p-3 hover:bg-gray-100 rounded-lg cursor-not-allowed opacity-50 relative group" 
+            title="Coming Soon"
+            disabled
+          >
             <Layers size={20} />
+            <span className="absolute left-16 bg-black text-white px-2 py-1 rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity ">
+              Layers feature coming soon!
+            </span>
           </button>
         </div>
 
