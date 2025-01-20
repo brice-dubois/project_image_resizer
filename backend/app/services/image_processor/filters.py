@@ -48,3 +48,15 @@ class SharpnessFilter(ImageFilter):
         value = params.get('value', 0)
         enhancer = ImageEnhance.Sharpness(image)
         return enhancer.enhance(1 + value)
+
+class RotateFilter(ImageFilter):
+    async def apply(self, image: Image.Image, params: dict) -> Image.Image:
+        angle = params.get('angle', 0)
+        return image.rotate(angle, expand=True)
+
+class FlipFilter(ImageFilter):
+    async def apply(self, image: Image.Image, params: dict) -> Image.Image:
+        flip_x = params.get('flipX', False)
+        if flip_x:
+            return image.transpose(Image.FLIP_LEFT_RIGHT)
+        return image

@@ -4,6 +4,7 @@ from app.schemas.image import ImageResponse, ProcessingParams
 from typing import Optional
 import io
 import logging
+import json
 
 router = APIRouter()
 
@@ -20,11 +21,14 @@ async def process_image(
         content = await image.read()
         img_bytes = io.BytesIO(content)
         
+        # Parse params into a dictionary
         params_dict = {}
         if params:
-            import json
             try:
                 params_dict = json.loads(params)
+                # If params contains a single value, wrap it in a dict
+                if isinstance(params_dict, (int, float)):
+                    params_dict = {"value": params_dict}
             except json.JSONDecodeError as e:
                 raise HTTPException(status_code=400, detail=f"Invalid params JSON: {str(e)}")
         

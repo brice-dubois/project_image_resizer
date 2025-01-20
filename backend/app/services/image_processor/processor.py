@@ -5,7 +5,9 @@ from .filters import (
     ExposureFilter,
     HighlightsFilter,
     ShadowsFilter,
-    SharpnessFilter
+    SharpnessFilter,
+    RotateFilter,
+    FlipFilter
 )
 from .utils import convert_to_base64, load_image
 from typing import Optional
@@ -17,7 +19,9 @@ class ImageProcessor:
             'exposure': ExposureFilter(),
             'highlights': HighlightsFilter(),
             'shadows': ShadowsFilter(),
-            'sharpness': SharpnessFilter()
+            'sharpness': SharpnessFilter(),
+            'rotate': RotateFilter(),
+            'flip': FlipFilter()
         }
     
     async def process(self, image_bytes: io.BytesIO, operation: str, params: dict):

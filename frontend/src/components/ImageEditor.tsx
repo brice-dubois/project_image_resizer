@@ -55,26 +55,44 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
 
   const handleExposureChange = async (value: number) => {
     setExposure(value);
-    await processImage('exposure', value);
+    await processImage('exposure', { value });
   };
 
   const handleHighlightsChange = async (value: number) => {
     setHighlights(value);
-    await processImage('highlights', value);
+    await processImage('highlights', { value });
   };
 
   const handleShadowsChange = async (value: number) => {
     setShadows(value);
-    await processImage('shadows', value);
+    await processImage('shadows', { value });
   };
 
   const handleSharpnessChange = async (value: number) => {
     setSharpness(value);
-    await processImage('sharpness', value);
+    await processImage('sharpness', { value });
   };
 
-  // Helper function to avoid code duplication
-  const processImage = async (operation: string, value: number) => {
+  const handleRotate = async () => {
+    await processImage('rotate', { angle: 90 });
+  };
+
+  const handleFlip = async () => {
+    await processImage('flip', { flipX: true });
+  };
+
+  const handleSave = () => {
+    if (canvas) {
+      const dataUrl = canvas.toDataURL({
+        format: 'png',
+        quality: 1,
+        multiplier: 1
+      });
+      onSave(dataUrl);
+    }
+  };
+
+  const processImage = async (operation: string, params: any) => {
     try {
       const formData = new FormData();
       const blob = await fetch(imageUrl).then(r => r.blob());
@@ -85,7 +103,7 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
         body: formData,
         headers: {
           'operation': operation,
-          'params': JSON.stringify({ value })
+          'params': JSON.stringify(params)
         }
       });
       
@@ -112,31 +130,6 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
       }
     } catch (error) {
       console.error('Error processing image:', error);
-    }
-  };
-
-  const handleRotate = () => {
-    if (image) {
-      image.rotate((image.angle || 0) + 90);
-      canvas?.renderAll();
-    }
-  };
-
-  const handleFlip = () => {
-    if (image) {
-      image.set('flipX', !image.flipX);
-      canvas?.renderAll();
-    }
-  };
-
-  const handleSave = () => {
-    if (canvas) {
-      const dataUrl = canvas.toDataURL({
-        format: 'png',
-        quality: 1,
-        multiplier: 1
-      });
-      onSave(dataUrl);
     }
   };
 
