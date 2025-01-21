@@ -32,23 +32,50 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
   // Add this state to track the current image URL
   const [currentImageUrl, setCurrentImageUrl] = useState(imageUrl);
 
+  // Add state for dimensions
+  const [width, setWidth] = useState<number>(0);
+  const [height, setHeight] = useState<number>(0);
+  const [originalAspectRatio, setOriginalAspectRatio] = useState<number>(1);
+
   useEffect(() => {
     if (canvasRef.current) {
+      // Get container dimensions (subtract margins/padding)
+      const containerWidth = window.innerWidth - 350; // Subtract sidebar widths
+      const containerHeight = window.innerHeight - 100; // Subtract header height
+      
+      // Calculate scale to fit image within container while maintaining aspect ratio
+      let scale = 1;
+      if (image) {
+        const widthScale = containerWidth / (image.width || 1);
+        const heightScale = containerHeight / (image.height || 1);
+        scale = Math.min(widthScale, heightScale, 1); // Don't scale up images
+      }
+      
+      // Create canvas with scaled dimensions
       const fabricCanvas = new Canvas(canvasRef.current, {
-        width: window.innerWidth - 350,
-        height: window.innerHeight - 100,
+        width: containerWidth,
+        height: containerHeight,
       });
       
       setCanvas(fabricCanvas);
-      setCurrentImageUrl(imageUrl); // Set initial image URL
+      setCurrentImageUrl(imageUrl);
 
       FabricImage.fromURL(imageUrl, {
         crossOrigin: 'anonymous'
       }).then((img) => {
-        img.scaleToWidth(700);
+        // Scale image to fit canvas
+        const scaledWidth = (img.width || 0) * scale;
+        const scaledHeight = (img.height || 0) * scale;
+        
+        img.scaleToWidth(scaledWidth);
         fabricCanvas.centerObject(img);
         fabricCanvas.add(img);
         setImage(img);
+        
+        // Set initial dimensions for resize inputs
+        setWidth(img.width || 0);
+        setHeight(img.height || 0);
+        setOriginalAspectRatio((img.width || 0) / (img.height || 0));
       });
 
       return () => {
@@ -90,13 +117,8 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
   };
 
   const handleSave = () => {
-    if (canvas) {
-      const dataUrl = canvas.toDataURL({
-        format: 'png',
-        quality: 1,
-        multiplier: 1
-      });
-      onSave(dataUrl);
+    if (currentImageUrl) {
+      onSave(currentImageUrl);
     }
   };
 
@@ -141,6 +163,21 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
     } catch (error) {
       console.error('Error processing image:', error);
     }
+  };
+
+  // Add resize handler
+  const handleWidthChange = (newWidth: number) => {
+    setWidth(newWidth);
+    setHeight(Math.round(newWidth / originalAspectRatio));
+  };
+
+  const handleHeightChange = (newHeight: number) => {
+    setHeight(newHeight);
+    setWidth(Math.round(newHeight * originalAspectRatio));
+  };
+
+  const handleResize = async () => {
+    await processImage('resize', { width, height });
   };
 
   return (
@@ -274,6 +311,36 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
             >
               <Trash2 size={18} className="text-white"/>
               <span className="text-sm text-white">Remove Background</span>
+            </button>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="font-semibold text-sm text-gray-600">Resize</h3>
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <label className="text-xs text-gray-500">Width (px)</label>
+                <input
+                  type="number"
+                  value={width}
+                  onChange={(e) => handleWidthChange(Number(e.target.value))}
+                  className="w-full px-2 py-1 border rounded"
+                />
+              </div>
+              <div className="flex-1">
+                <label className="text-xs text-gray-500">Height (px)</label>
+                <input
+                  type="number"
+                  value={height}
+                  onChange={(e) => handleHeightChange(Number(e.target.value))}
+                  className="w-full px-2 py-1 border rounded"
+                />
+              </div>
+            </div>
+            <button
+              onClick={handleResize}
+              className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Resize Image
             </button>
           </div>
         </div>

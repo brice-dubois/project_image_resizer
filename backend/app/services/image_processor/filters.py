@@ -75,3 +75,44 @@ class RemoveBackgroundFilter(ImageFilter):
         
         # Convert back to PIL Image
         return Image.open(io.BytesIO(output))
+
+class ResizeFilter(ImageFilter):
+    async def apply(self, image: Image.Image, params: dict) -> Image.Image:
+        width = params.get('width', image.width)
+        height = params.get('height', image.height)
+        
+        # Calculate new dimensions maintaining aspect ratio
+        aspect_ratio = image.width / image.height
+        if width / height > aspect_ratio:
+            width = int(height * aspect_ratio)
+        else:
+            height = int(width / aspect_ratio)
+            
+        # Set DPI to 300
+        dpi = (300, 300)
+        
+        # Resize image with high-quality resampling
+        resized = image.resize((width, height), Image.Resampling.LANCZOS)
+        resized.info['dpi'] = dpi
+        
+        # Optimize file size
+        buffer = io.BytesIO()
+        
+        # Try different quality settings until file size is < 1MB
+        quality = 95
+        while quality > 50:  # Don't go below quality of 50
+            buffer.seek(0)
+            buffer.truncate()
+            resized.save(buffer, 
+                        format='PNG', 
+                        optimize=True, 
+                        quality=quality)
+            if buffer.tell() < 1024 * 1024:  # Less than 1MB
+                break
+            quality -= 5
+        
+        buffer.seek(0)
+        optimized = Image.open(buffer)
+        optimized.info['dpi'] = dpi
+        
+        return optimized
