@@ -36,19 +36,29 @@ export function LoginPage({ onLogin }: LoginProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showCredentials, setShowCredentials] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
       setError('Please fill in all fields');
       return;
     }
 
-    // Find user with matching credentials
-    const user = USERS.find(u => u.email === email && u.password === password);
-    
-    if (user) {
+    try {
+      const response = await fetch('http://localhost:8005/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Invalid credentials');
+      }
+
+      const userData = await response.json();
       onLogin(email, password);
-    } else {
+    } catch (err) {
       setError('Invalid email or password');
     }
   };
