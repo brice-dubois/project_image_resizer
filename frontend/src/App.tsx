@@ -7,13 +7,20 @@ import { Modal } from './components/Modal';
 import { ImageFile } from './types';
 import { compressImage, createObjectURL, revokeObjectURL, resizeImage } from './utils/imageProcessing';
 import { ImageEditorPage } from './pages/ImageEditorPage';
+import { LoginPage } from './pages/LoginPage';
 import { ThemeProvider } from './contexts/ThemeContext';
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [images, setImages] = useState<ImageFile[]>([]);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [currentPage, setCurrentPage] = useState<'resizer' | 'editor'>('resizer');
+
+  const handleLogin = (email: string, password: string) => {
+    // In a real app, you would validate credentials with a backend
+    setIsAuthenticated(true);
+  };
 
   React.useEffect(() => {
     if (darkMode) {
@@ -126,6 +133,14 @@ function App() {
       });
     };
   }, []);
+
+  if (!isAuthenticated) {
+    return (
+      <ThemeProvider>
+        <LoginPage onLogin={handleLogin} />
+      </ThemeProvider>
+    );
+  }
 
   return (
     <ThemeProvider>

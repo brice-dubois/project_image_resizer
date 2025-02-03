@@ -80,7 +80,7 @@ A professional image processing application that offers advanced editing capabil
 #### Using Docker
 - bash
 - docker build -t image-resizer .
-- docker run -p 8000:8000 image-resizer
+- docker run -p 8005:8005 image-resizer
 
 ## Project Structure
 ```
@@ -102,7 +102,7 @@ project/
 
 ## API Documentation
 
-Full API documentation is available at `http://localhost:8000/docs` when running the application.
+Full API documentation is available at `http://localhost:8005/docs` when running the application.
 
 ## Usage
 
