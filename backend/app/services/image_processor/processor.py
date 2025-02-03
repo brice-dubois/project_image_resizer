@@ -1,16 +1,10 @@
 import cv2
 import numpy as np
 from PIL import Image
-from .filters import (
-    ExposureFilter,
-    HighlightsFilter,
-    ShadowsFilter,
-    SharpnessFilter,
-    RotateFilter,
-    FlipFilter,
-    RemoveBackgroundFilter,
-    ResizeFilter
-)
+from .filters import (ImageFilter, ExposureFilter, HighlightsFilter, 
+                     ShadowsFilter, SharpnessFilter, RotateFilter, 
+                     FlipFilter, RemoveBackgroundFilter, ResizeFilter,
+                     WhiteBackgroundFilter)
 from .utils import convert_to_base64, load_image
 from typing import Optional
 import io
@@ -25,7 +19,8 @@ class ImageProcessor:
             'rotate': RotateFilter(),
             'flip': FlipFilter(),
             'remove_background': RemoveBackgroundFilter(),
-            'resize': ResizeFilter()
+            'resize': ResizeFilter(),
+            'white_background': WhiteBackgroundFilter()
         }
     
     async def process(self, image_bytes: io.BytesIO, operation: str, params: dict):

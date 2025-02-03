@@ -9,7 +9,9 @@ import {
   Wand2,
   Layers,
   X,
-  Trash2
+  Trash2,
+  ImageIcon,
+  Loader2
 } from 'lucide-react';
 
 interface ImageEditorProps {
@@ -36,6 +38,12 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
   const [width, setWidth] = useState<number>(0);
   const [height, setHeight] = useState<number>(0);
   const [originalAspectRatio, setOriginalAspectRatio] = useState<number>(1);
+
+  const [isRemovingBackground, setIsRemovingBackground] = useState(false);
+  const [isChangingBackground, setIsChangingBackground] = useState(false);
+
+  // Add new state to track any processing
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -116,6 +124,10 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
     await processImage('remove_background', {});
   };
 
+  const handleWhiteBackground = async () => {
+    await processImage('white_background', {});
+  };
+
   const handleSave = () => {
     if (currentImageUrl) {
       onSave(currentImageUrl);
@@ -124,6 +136,7 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
 
   const processImage = async (operation: string, params: any) => {
     try {
+      setIsProcessing(true);
       const formData = new FormData();
       const blob = await fetch(currentImageUrl).then(r => r.blob());
       formData.append('image', blob);
@@ -146,7 +159,7 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
       const data = await response.json();
       if (data.image) {
         const newImageUrl = `data:image/png;base64,${data.image}`;
-        setCurrentImageUrl(newImageUrl); // Update the current image URL
+        setCurrentImageUrl(newImageUrl);
         
         FabricImage.fromURL(newImageUrl, {
           crossOrigin: 'anonymous'
@@ -162,6 +175,8 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
       }
     } catch (error) {
       console.error('Error processing image:', error);
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -203,7 +218,19 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
         </button>
       </div>
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* Add loading overlay */}
+        {isProcessing && (
+          <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 flex flex-col items-center gap-4">
+              <Loader2 className="w-12 h-12 animate-spin text-blue-500" />
+              <p className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                Processing Image...
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Tools Sidebar */}
         <div className="w-16 border-r p-2 flex flex-col gap-2">
           <button 
@@ -304,13 +331,20 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
               </button>
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="space-y-2">
             <button
               onClick={handleRemoveBackground}
-              className="flex-1 p-2 border rounded-lg bg-blue-500 hover:bg-blue-700 flex items-center justify-center gap-2"
+              className="w-full p-2 border rounded-lg bg-red-500 hover:bg-red-700 flex items-center justify-center gap-2"
             >
               <Trash2 size={18} className="text-white"/>
               <span className="text-sm text-white">Remove Background</span>
+            </button>
+            <button
+              onClick={handleWhiteBackground}
+              className="w-full p-2 border rounded-lg bg-blue-500 hover:bg-blue-700 flex items-center justify-center gap-2"
+            >
+              <ImageIcon size={18} className="text-white" />
+              <span className="text-sm text-white">White Background</span>
             </button>
           </div>
 
