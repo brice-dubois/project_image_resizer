@@ -128,7 +128,7 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
       const blob = await fetch(currentImageUrl).then(r => r.blob());
       formData.append('image', blob);
       
-      const response = await fetch('http://localhost:8000/api/process-image', {
+      const response = await fetch('http://localhost:8005/api/process-image', {
         method: 'POST',
         body: formData,
         headers: {
