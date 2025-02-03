@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 import io
 from rembg import remove
+from .cache import ImageCache
 
 class ImageFilter(ABC):
     @abstractmethod
@@ -64,17 +65,49 @@ class FlipFilter(ImageFilter):
         return image
 
 class RemoveBackgroundFilter(ImageFilter):
+    def __init__(self):
+        self.cache = ImageCache()
+        self.session = None
+        try:
+            from rembg import new_session
+            self.session = new_session(model_name="u2net_human_seg")
+        except Exception as e:
+            print(f"Failed to initialize GPU session: {e}")
+
     async def apply(self, image: Image.Image, params: dict) -> Image.Image:
-        # Convert PIL Image to bytes
+        # Convert image to bytes for caching
         img_byte_arr = io.BytesIO()
         image.save(img_byte_arr, format='PNG')
-        img_byte_arr = img_byte_arr.getvalue()
+        img_bytes = img_byte_arr.getvalue()
         
-        # Remove background
-        output = remove(img_byte_arr)
+        # Check cache
+        cache_key = self.cache.get_cache_key(img_bytes)
+        cached_image = self.cache.get_cached_image(cache_key)
+        if cached_image:
+            return cached_image
+
+        # Process image if not cached
+        max_size = 1500
+        orig_size = image.size
+        if max(image.size) > max_size:
+            ratio = max_size / max(image.size)
+            new_size = tuple(int(dim * ratio) for dim in image.size)
+            image = image.resize(new_size, Image.Resampling.LANCZOS)
         
-        # Convert back to PIL Image
-        return Image.open(io.BytesIO(output))
+        if self.session:
+            output = remove(img_bytes, session=self.session)
+        else:
+            output = remove(img_bytes)
+        
+        result = Image.open(io.BytesIO(output))
+        
+        if max(image.size) > max_size:
+            result = result.resize(orig_size, Image.Resampling.LANCZOS)
+        
+        # Cache the result
+        self.cache.cache_image(cache_key, result)
+        
+        return result
 
 class ResizeFilter(ImageFilter):
     async def apply(self, image: Image.Image, params: dict) -> Image.Image:
