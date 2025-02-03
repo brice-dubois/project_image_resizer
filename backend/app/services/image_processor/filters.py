@@ -149,3 +149,18 @@ class ResizeFilter(ImageFilter):
         optimized.info['dpi'] = dpi
         
         return optimized
+
+class WhiteBackgroundFilter(ImageFilter):
+    async def apply(self, image: Image.Image, params: dict) -> Image.Image:
+        # Convert to RGBA if not already
+        if image.mode != 'RGBA':
+            image = image.convert('RGBA')
+        
+        # Create a white background image
+        white_bg = Image.new('RGBA', image.size, (255, 255, 255, 255))
+        
+        # Paste the image onto the white background using alpha compositing
+        composite = Image.alpha_composite(white_bg, image)
+        
+        # Convert back to RGB
+        return composite.convert('RGB')

@@ -9,7 +9,8 @@ import {
   Wand2,
   Layers,
   X,
-  Trash2
+  Trash2,
+  ImageIcon
 } from 'lucide-react';
 
 interface ImageEditorProps {
@@ -114,6 +115,10 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
 
   const handleRemoveBackground = async () => {
     await processImage('remove_background', {});
+  };
+
+  const handleWhiteBackground = async () => {
+    await processImage('white_background', {});
   };
 
   const handleSave = () => {
@@ -304,13 +309,20 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
               </button>
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="space-y-2">
             <button
               onClick={handleRemoveBackground}
-              className="flex-1 p-2 border rounded-lg bg-blue-500 hover:bg-blue-700 flex items-center justify-center gap-2"
+              className="w-full p-2 border rounded-lg bg-red-500 hover:bg-red-700 flex items-center justify-center gap-2"
             >
               <Trash2 size={18} className="text-white"/>
               <span className="text-sm text-white">Remove Background</span>
+            </button>
+            <button
+              onClick={handleWhiteBackground}
+              className="w-full p-2 border rounded-lg bg-blue-500 hover:bg-blue-700 flex items-center justify-center gap-2"
+            >
+              <ImageIcon size={18} className="text-white" />
+              <span className="text-sm text-white">White Background</span>
             </button>
           </div>
 
