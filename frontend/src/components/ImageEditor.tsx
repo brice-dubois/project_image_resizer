@@ -10,7 +10,8 @@ import {
   Layers,
   X,
   Trash2,
-  ImageIcon
+  ImageIcon,
+  Loader2
 } from 'lucide-react';
 
 interface ImageEditorProps {
@@ -37,6 +38,9 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
   const [width, setWidth] = useState<number>(0);
   const [height, setHeight] = useState<number>(0);
   const [originalAspectRatio, setOriginalAspectRatio] = useState<number>(1);
+
+  const [isRemovingBackground, setIsRemovingBackground] = useState(false);
+  const [isChangingBackground, setIsChangingBackground] = useState(false);
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -114,11 +118,21 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
   };
 
   const handleRemoveBackground = async () => {
-    await processImage('remove_background', {});
+    try {
+      setIsRemovingBackground(true);
+      await processImage('remove_background', {});
+    } finally {
+      setIsRemovingBackground(false);
+    }
   };
 
   const handleWhiteBackground = async () => {
-    await processImage('white_background', {});
+    try {
+      setIsChangingBackground(true);
+      await processImage('white_background', {});
+    } finally {
+      setIsChangingBackground(false);
+    }
   };
 
   const handleSave = () => {
@@ -312,17 +326,31 @@ export function ImageEditor({ imageUrl, onSave, onClose }: ImageEditorProps) {
           <div className="space-y-2">
             <button
               onClick={handleRemoveBackground}
-              className="w-full p-2 border rounded-lg bg-red-500 hover:bg-red-700 flex items-center justify-center gap-2"
+              disabled={isRemovingBackground}
+              className="w-full p-2 border rounded-lg bg-red-500 hover:bg-red-700 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Trash2 size={18} className="text-white"/>
-              <span className="text-sm text-white">Remove Background</span>
+              {isRemovingBackground ? (
+                <Loader2 size={18} className="text-white animate-spin" />
+              ) : (
+                <Trash2 size={18} className="text-white" />
+              )}
+              <span className="text-sm text-white">
+                {isRemovingBackground ? 'Removing Background...' : 'Remove Background'}
+              </span>
             </button>
             <button
               onClick={handleWhiteBackground}
-              className="w-full p-2 border rounded-lg bg-blue-500 hover:bg-blue-700 flex items-center justify-center gap-2"
+              disabled={isChangingBackground}
+              className="w-full p-2 border rounded-lg bg-blue-500 hover:bg-blue-700 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <ImageIcon size={18} className="text-white" />
-              <span className="text-sm text-white">White Background</span>
+              {isChangingBackground ? (
+                <Loader2 size={18} className="text-white animate-spin" />
+              ) : (
+                <ImageIcon size={18} className="text-white" />
+              )}
+              <span className="text-sm text-white">
+                {isChangingBackground ? 'Changing Background...' : 'White Background'}
+              </span>
             </button>
           </div>
 
