@@ -145,7 +145,7 @@ export function LoginPage({ onLogin }: LoginProps) {
             </p>
           </div>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form className="mt-8 space-y-6 z-20" onSubmit={handleSubmit}>
           {error && (
             <div className="text-red-100 bg-red-500/40 text-sm text-center p-2 rounded-lg backdrop-blur-sm">
               {error}
@@ -165,7 +165,7 @@ export function LoginPage({ onLogin }: LoginProps) {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="appearance-none rounded-lg relative block w-full px-10 py-3 border border-white/30 placeholder-gray-300 text-white focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent sm:text-sm bg-white/10 backdrop-blur-sm"
+                className="appearance-none rounded-lg relative block w-full px-10 py-3 border border-white/30 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent sm:text-sm bg-white/10 backdrop-blur-sm"
                 placeholder="Email address"
               />
             </div>
@@ -182,7 +182,7 @@ export function LoginPage({ onLogin }: LoginProps) {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="appearance-none rounded-lg relative block w-full px-10 py-3 border border-white/30 placeholder-gray-300 text-white focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent sm:text-sm bg-white/10 backdrop-blur-sm"
+                className="appearance-none rounded-lg relative block w-full px-10 py-3 border border-white/30 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent sm:text-sm bg-white/10 backdrop-blur-sm"
                 placeholder="Password"
               />
               <button
@@ -202,13 +202,18 @@ export function LoginPage({ onLogin }: LoginProps) {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex mt-10 justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-white/20 hover:bg-white/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white/50 transition-all duration-200 backdrop-blur-sm"
+              className="group relative w-full flex mt-10 justify-center py-3 px-4 border border-transparent text-md font-medium rounded-lg text-white bg-blue-500/50 hover:bg-yellow-500/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white/50 transition-all duration-200 backdrop-blur-sm"
             >
               Sign in
             </button>
           </div>
 
         </form>
+
+        {/* Copyright footer */}
+        <div className="fixed bottom-4 left-0 right-0 text-center text-sm text-gray-100">
+          © {new Date().getFullYear()} Image Resizer. All rights reserved.
+        </div>
       </div>
     </div>
   );
