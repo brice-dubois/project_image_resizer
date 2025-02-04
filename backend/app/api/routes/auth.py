@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 from typing import Optional
-
+from app.core.config import settings
 router = APIRouter()
 
 class LoginRequest(BaseModel):
@@ -13,14 +13,14 @@ async def login(request: Request, login_data: LoginRequest):
     # Reference the users from LoginPage.tsx
     USERS = [
         {
-            "email": "admin@example.com",
-            "password": "admin123",
+            "email": settings.USER_EMAIL1,
+            "password": settings.USER_PASSWORD1,
             "name": "Admin User",
             "role": "admin"
         },
         {
-            "email": "brice.dubois@etail-agency.com",
-            "password": "brice123",
+            "email": settings.USER_EMAIL2,
+            "password": settings.USER_PASSWORD2,
             "name": "Brice Dubois",
             "role": "user"
         }
