@@ -14,6 +14,12 @@ class Settings(BaseSettings):
     DATASET_ID: str
     TABLE_ID: str = "user_logs"
 
+    # User settings
+    USER_EMAIL1: str
+    USER_PASSWORD1: str
+    USER_EMAIL2: str
+    USER_PASSWORD2: str
+
     class Config:
         env_file = ".env"
 

@@ -14,6 +14,10 @@ async def logging_middleware(request: Request, call_next):
         # Get user email from request state (set during authentication)
         user_email = getattr(request.state, "user_email", "anonymous")
         
+        # For login requests, store the start time
+        if request.url.path.endswith("/login"):
+            request.state.login_time = start_time
+        
         await logging_service.log_request(
             request=request,
             user_email=user_email,
