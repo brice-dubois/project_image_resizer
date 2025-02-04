@@ -6,6 +6,7 @@ from typing import Optional
 from app.core.config import settings
 import os
 from pathlib import Path
+import json
 
 class LoggingService:
     def __init__(self):
@@ -71,23 +72,24 @@ class LoggingService:
         execution_time: float,
         error_message: Optional[str] = None,
         task: Optional[str] = None,
-        tool_url: Optional[str] = None
+        tool_url: Optional[str] = None,
+        metadata: Optional[dict] = None
     ):
         try:
-            rows_to_insert = [{
-                "datetime": datetime.utcnow(),
+            rows = [{
+                "datetime": datetime.utcnow().isoformat(),
                 "user_email": user_email,
-                "user_ip": request.client.host,
-                "endpoint": str(request.url.path),
-                "method": request.method,
+                "user_ip": request.client.host if hasattr(request, "client") else None,
+                "endpoint": str(request.url.path) if hasattr(request, "url") else None,
+                "method": request.method if hasattr(request, "method") else None,
                 "status_code": status_code,
-                "execution_time": execution_time,
+                "execution_time": float(execution_time),
                 "error_message": error_message or "",
                 "task": task or "",
-                "tool_url": tool_url or str(request.base_url)
+                "tool_url": tool_url or str(request.base_url) if hasattr(request, "base_url") else ""
             }]
 
-            errors = self.client.insert_rows_json(self.table_id, rows_to_insert)
+            errors = self.client.insert_rows_json(self.table_id, rows)
             if errors:
                 print(f"Errors inserting rows: {errors}")
         except Exception as e:

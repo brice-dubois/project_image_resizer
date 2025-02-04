@@ -71,13 +71,79 @@ export function LoginPage({ onLogin }: LoginProps) {
       }}
     >
       <div className="max-w-md w-full space-y-8 p-10 rounded-xl backdrop-blur-sm bg-white/30 dark:bg-gray-900/30 shadow-xl border border-white/20">
-        <div>
-          <h2 className="mt-2 text-center text-3xl font-extrabold text-white">
-            Image Resizer Pro
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-100">
-            Sign in to access your workspace
-          </p>
+        <div className="text-center flex flex-col items-center">
+          <canvas
+            id="logoCanvas"
+            className="absolute inset-0 w-full h-full rounded-xl"
+            ref={(canvas) => {
+              if (canvas) {
+                // Set canvas size to match parent div
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+                
+                const ctx = canvas.getContext('2d');
+                if (ctx) {
+                  // Set up particles
+                  const particles: {
+                    x: number;
+                    y: number;
+                    radius: number;
+                    speed: number;
+                    opacity: number;
+                  }[] = [];
+                  const particleCount = 75;
+                  
+                  for (let i = 0; i < particleCount; i++) {
+                    particles.push({
+                      x: Math.random() * canvas.width,
+                      y: -10, // Start above canvas
+                      radius: Math.random() * 3 + 1,
+                      speed: Math.random() * 0.5 + 0.2, // Reduced speed range from 1-3 to 0.2-0.7
+                      opacity: Math.random()
+                    });
+                  }
+
+                  // Animation loop
+                  const animate = () => {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    // Draw and update particles
+                    particles.forEach(particle => {
+                      ctx.beginPath();
+                      ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+                      // Randomly choose between white and light blue
+                      const color = Math.random() < 0.5 ? 
+                        `rgba(255, 255, 255, ${particle.opacity})` :
+                        `rgba(173, 216, 230, ${particle.opacity})`;
+                      ctx.fillStyle = color;
+                      ctx.fill();
+                      
+                      // Move particle down
+                      particle.y += particle.speed;
+                      
+                      // Reset particle if it goes off screen
+                      if (particle.y > canvas.height) {
+                        particle.y = -10;
+                        particle.x = Math.random() * canvas.width;
+                      }
+                    });
+
+                    requestAnimationFrame(animate);
+                  };
+
+                  animate();
+                }
+              }
+            }}
+          />
+          <div className="relative z-10">
+            <h2 className="mt-2 text-3xl font-extrabold text-white">
+              Image Resizer
+            </h2>
+            <p className="mt-2 text-sm text-gray-100">
+              Sign in to access your workspace
+            </p>
+          </div>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (
@@ -133,54 +199,15 @@ export function LoginPage({ onLogin }: LoginProps) {
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 rounded border-white/30 bg-white/10 backdrop-blur-sm focus:ring-2 focus:ring-white/50"
-              />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-100">
-                Remember me
-              </label>
-            </div>
-
-            <div className="text-sm">
-              <button
-                type="button"
-                onClick={() => setShowCredentials(!showCredentials)}
-                className="font-medium text-gray-100 hover:text-white"
-              >
-                Show available users
-              </button>
-            </div>
-          </div>
-
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-white/20 hover:bg-white/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white/50 transition-all duration-200 backdrop-blur-sm"
+              className="group relative w-full flex mt-10 justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-white/20 hover:bg-white/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white/50 transition-all duration-200 backdrop-blur-sm"
             >
               Sign in
             </button>
           </div>
 
-          {showCredentials && (
-            <div className="mt-4 p-4 rounded-lg bg-white/10 backdrop-blur-sm border border-white/30">
-              <h3 className="text-white font-medium mb-2">Available Users:</h3>
-              <div className="space-y-2">
-                {USERS.map((user) => (
-                  <div key={user.email} className="text-sm text-gray-100">
-                    <p><strong>Email:</strong> {user.email}</p>
-                    <p><strong>Password:</strong> {user.password}</p>
-                    <p><strong>Role:</strong> {user.role}</p>
-                    <hr className="border-white/20 my-2" />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </form>
       </div>
     </div>

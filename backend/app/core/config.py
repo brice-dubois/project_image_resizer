@@ -19,6 +19,12 @@ class Settings(BaseSettings):
     USER_PASSWORD1: str
     USER_EMAIL2: str
     USER_PASSWORD2: str
+    USER_EMAIL3: str
+    USER_PASSWORD3: str
+    USER_EMAIL4: str
+    USER_PASSWORD4: str
+    USER_EMAIL5: str
+    USER_PASSWORD5: str
 
     class Config:
         env_file = ".env"

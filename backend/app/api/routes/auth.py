@@ -31,6 +31,24 @@ async def login(request: Request, login_data: LoginRequest):
             "password": settings.USER_PASSWORD2,
             "name": "Admin User",
             "role": "admin"
+        },
+        {
+            "email": settings.USER_EMAIL3,
+            "password": settings.USER_PASSWORD3,
+            "name": "Catalogue User",
+            "role": "user"
+        },
+        {
+            "email": settings.USER_EMAIL4,
+            "password": settings.USER_PASSWORD4,
+            "name": "Content User",
+            "role": "user"
+        },
+        {
+            "email": settings.USER_EMAIL5,
+            "password": settings.USER_PASSWORD5,
+            "name": "Team PE User",
+            "role": "user"
         }
     ]
     
