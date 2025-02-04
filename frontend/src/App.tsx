@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Moon, Sun, Download } from 'lucide-react';
+import { Moon, Sun, Download, LogOut } from 'lucide-react';
 import JSZip from 'jszip';
 import { ImageUploader } from './components/ImageUploader';
 import { ImagePreview } from './components/ImagePreview';
@@ -126,6 +126,20 @@ function App() {
     setShowConfirmation(false);
   };
 
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('http://localhost:8005/api/logout', {
+        method: 'POST'
+      });
+      
+      if (response.ok) {
+        setIsAuthenticated(false);
+      }
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
+
   React.useEffect(() => {
     return () => {
       images.forEach((image) => {
@@ -184,6 +198,13 @@ function App() {
                   Download All
                 </button>
               )}
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition-colors flex items-center gap-2"
+              >
+                <LogOut size={16} />
+                Logout
+              </button>
               <button
                 onClick={() => setDarkMode(!darkMode)}
                 className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
