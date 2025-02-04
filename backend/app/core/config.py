@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     GOOGLE_APPLICATION_CREDENTIALS: str
     PROJECT_ID: str
     DATASET_ID: str
-    TABLE_ID: str = "user_logs"
+    TABLE_ID: str
 
     # User settings
     USER_EMAIL1: str

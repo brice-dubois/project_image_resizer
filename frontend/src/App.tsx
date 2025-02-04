@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Moon, Sun, Download, LogOut } from 'lucide-react';
 import JSZip from 'jszip';
 import { ImageUploader } from './components/ImageUploader';
@@ -11,15 +11,21 @@ import { LoginPage } from './pages/LoginPage';
 import { ThemeProvider } from './contexts/ThemeContext';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    // Check if user is authenticated on initial load
+    return localStorage.getItem('isAuthenticated') === 'true';
+  });
   const [darkMode, setDarkMode] = useState(false);
   const [images, setImages] = useState<ImageFile[]>([]);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [currentPage, setCurrentPage] = useState<'resizer' | 'editor'>('resizer');
+  const lastActivityTime = useRef(Date.now());
+  const SESSION_TIMEOUT = 10 * 60 * 1000; // 10 minutes in milliseconds
 
   const handleLogin = (email: string, password: string) => {
-    // In a real app, you would validate credentials with a backend
     setIsAuthenticated(true);
+    localStorage.setItem('isAuthenticated', 'true');
+    lastActivityTime.current = Date.now();
   };
 
   React.useEffect(() => {
@@ -126,6 +132,36 @@ function App() {
     setShowConfirmation(false);
   };
 
+  const checkSessionTimeout = () => {
+    const currentTime = Date.now();
+    if (currentTime - lastActivityTime.current > SESSION_TIMEOUT) {
+      handleLogout();
+    }
+  };
+
+  // Update last activity time on any user interaction
+  useEffect(() => {
+    const updateActivity = () => {
+      lastActivityTime.current = Date.now();
+    };
+
+    if (isAuthenticated) {
+      window.addEventListener('mousemove', updateActivity);
+      window.addEventListener('keydown', updateActivity);
+      window.addEventListener('click', updateActivity);
+
+      // Check session timeout every minute
+      const interval = setInterval(checkSessionTimeout, 60000);
+
+      return () => {
+        window.removeEventListener('mousemove', updateActivity);
+        window.removeEventListener('keydown', updateActivity);
+        window.removeEventListener('click', updateActivity);
+        clearInterval(interval);
+      };
+    }
+  }, [isAuthenticated]);
+
   const handleLogout = async () => {
     try {
       const response = await fetch('http://localhost:8005/api/logout', {
@@ -134,6 +170,9 @@ function App() {
       
       if (response.ok) {
         setIsAuthenticated(false);
+        localStorage.removeItem('isAuthenticated');
+        // Optionally clear other stored data
+        localStorage.clear();
       }
     } catch (error) {
       console.error('Error logging out:', error);
